@@ -2,6 +2,7 @@
 #   Author: iMED group
 #   Time: 2023/5/8
 #   Thanks: nnUNet framework
+#   Edits to original code made by Jiantao Shen, 20.05.25
 
 import glob
 import os
@@ -16,13 +17,13 @@ import SimpleITK as sitk
 import shutil
 from costa.paths import nnUNet_RAW_DATA, nnUNet_PREPROCESSED, nnUNet_TRAINED_MODELS
 
-
 def find_task_name_from_task_id(task_id):
     nnunet_raw_data = join(nnUNet_RAW_DATA, "nnUNet_raw_data")
     all_task_dirs = listdir(nnunet_raw_data)
     target_task = None
     for tpe in all_task_dirs:
-        if tpe.startswith("Task" + str(task_id) + "_"):
+        # if tpe.startswith("Task" + str(task_id) + "_"):
+        if tpe.startswith("Task" + f'{task_id:03d}' + "_") or tpe.startswith("Task" + f'{task_id:03d}'): # !!!
             target_task = tpe
     if target_task is None:
         raise ValueError("Cannot find target task based on task id %d" % task_id)
@@ -31,7 +32,11 @@ def find_task_name_from_task_id(task_id):
 
 
 def generate_task_name_from_task_id(task_id, task):
-    task_name = "Task%03.0d" % task_id + "_" + task.split("_")[-1]
+    # task_name = "Task%03.0d" % task_id + "_" + task.split("_")[-1]
+    if task.split("_")[1:]:
+        task_name = "Task%03.0d" % task_id + "_" + "_".join(task.split("_")[1:]) # !!!
+    else:
+        task_name = "Task%03.0d" % task_id # !!!
     return task_name
 
 
@@ -54,6 +59,15 @@ def convert_dataset_to_cesar_format(task_id: int):
     patient_names = []
     for tpe in ["imagesTr"]:
         cur = join(downloaded_data_dir, tpe)
+        if not os.path.exists(cur): # !!!
+            print('@' * 20)
+            print('@' * 20)
+            print('@' * 20)
+            print('   WARNING No imagesTr dir found   ' * 3)
+            print('@' * 20)
+            print('@' * 20)
+            print('@' * 20)
+            break                                # !!!
         for p in sorted(os.listdir(cur)):
             patient_name = p[:-7]
             patient_names.append(patient_name)
@@ -61,7 +75,9 @@ def convert_dataset_to_cesar_format(task_id: int):
             # imagesTr_normed folder contains the intensisty histogram-standardized TOF-MRA images.
             normed = join(downloaded_data_dir, "imagesTr_normed", patient_name + ".nii.gz")
             seg = join(downloaded_data_dir, "labelsTr", patient_name + ".nii.gz")
-
+            print(ori)
+            print(normed)
+            print(seg)
             assert all([
                 isfile(ori),
                 isfile(normed),
@@ -80,12 +96,13 @@ def convert_dataset_to_cesar_format(task_id: int):
 
     patient_namesTs = []
     for tpe in ["imagesTs"]:
+        tpe = tpe + "_SkullStripped" # !!!
         cur = join(downloaded_data_dir, tpe)
         for p in sorted(os.listdir(cur)):
             patient_name = p[:-7]
             patient_namesTs.append(patient_name)
             ori = join(cur, patient_name + ".nii.gz")
-            normed = join(downloaded_data_dir, "imagesTs_normed", patient_name + ".nii.gz")
+            normed = join(downloaded_data_dir, "imagesTs_SkullStripped_normed", patient_name + ".nii.gz") # !!!
 
             assert all([
                 isfile(ori),

@@ -11,7 +11,8 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-
+#
+#   Edits to this code made by Jiantao Shen, 20.05.25
 
 from _warnings import warn
 from typing import Tuple
@@ -94,7 +95,8 @@ class NetworkTrainer(object):
         # too high the training will take forever
         self.train_loss_MA_alpha = 0.93  # alpha * old + (1-alpha) * new
         self.train_loss_MA_eps = 5e-4  # new MA must be at least this much better (smaller)
-        self.max_num_epochs = 1000
+        self.max_num_epochs = 250
+        print('XXXXXXXXXXXXXXXXXX', self.max_num_epochs)
         self.num_batches_per_epoch = 250
         self.num_val_batches_per_epoch = 50
         self.also_val_in_tr_mode = False
