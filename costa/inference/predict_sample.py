@@ -11,6 +11,8 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
+#
+#   Edits to this code made by Jiantao Shen, 20.05.25
 
 
 import argparse
@@ -30,8 +32,11 @@ def find_task_name_from_task_id(task_id, model):
     nnunet_trained_models = join(nnUNet_TRAINED_MODELS, "COSTA", model)
     all_task_dirs = listdir(nnunet_trained_models)
     target_task = None
+    print(nnUNet_TRAINED_MODELS, task_id, model)
+    print(0,nnunet_trained_models)
+    print(8,all_task_dirs)
     for tpe in all_task_dirs:
-        if tpe.startswith("Task%03.0d" % task_id + "_"):
+        if tpe.startswith("Task%03.0d" % task_id + "_") or tpe.startswith("Task%03.0d" % task_id): # !!!
             target_task = tpe
     if target_task is None:
         raise ValueError("Cannot find target task based on task id %d in %s" % (task_id, nnunet_trained_models))
@@ -40,7 +45,11 @@ def find_task_name_from_task_id(task_id, model):
 
 
 def generate_task_name_from_task_id(task_id, task):
-    task_name = "Task%03.0d" % task_id + "_" + task.split("_")[-1]
+    if "_" in task: # !!!
+        task_name = "Task%03.0d" % task_id + "_" + task.split("_")[-1]
+    else:
+        task_name = "Task%03.0d" % task_id
+
     return task_name
 
 
@@ -139,7 +148,9 @@ def main():
                         help='Predictions are done with mixed precision by default. This improves speed and reduces '
                              'the required vram. If you want to disable mixed precision you can set this flag. Note '
                              'that this is not recommended (mixed precision is ~2x faster!)')
-
+    parser.add_argument('-img_path_root',
+                        help='path to images with same nifti params as logits file',
+                        required=True)
     args = parser.parse_args()
     input_folder = args.input_folder
     output_folder = args.output_folder
@@ -152,6 +163,7 @@ def main():
     num_threads_nifti_save = args.num_threads_nifti_save
     disable_tta = args.disable_tta
     step_size = args.step_size
+    img_path_root = args.img_path_root
     # interp_order = args.interp_order
     # interp_order_z = args.interp_order_z
     # force_separate_z = args.force_separate_z
@@ -167,7 +179,6 @@ def main():
         task_id = int(task_name)
         task = find_task_name_from_task_id(task_id, model)
         task_name = generate_task_name_from_task_id(task_id, task)
-
     assert model in ["CESAR", "M3", "nnUNet", "UNet", "VNet"], "-m must be 'CESAR', 'nnUNet', 'UNet', and 'VNet' "
 
     # if force_separate_z == "None":
@@ -234,7 +245,7 @@ def main():
                         num_threads_nifti_save, lowres_segmentations, part_id, num_parts, not disable_tta,
                         overwrite_existing=overwrite_existing, mode=mode, overwrite_all_in_gpu=all_in_gpu,
                         mixed_precision=not args.disable_mixed_precision,
-                        step_size=step_size, checkpoint_name=args.chk)
+                        step_size=step_size, checkpoint_name=args.chk, img_path_root=img_path_root)
     end = time()
     save_json(end - st, join(output_folder, 'prediction_time.txt'))
 
