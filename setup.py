@@ -17,6 +17,7 @@ setup(name='costa',
           "rich",
           "openpyxl",
           "numpy==1.23.2",
+          "SimpleITK==2.1.1",
       ],
       entry_points={
           'console_scripts': [

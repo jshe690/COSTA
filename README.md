@@ -36,13 +36,15 @@ To install the necessary COSTA components, please follow these steps:
   source $MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/bin/activate
   ```
 
-- Clone this repo:
+- Navigate to the parent directory of `$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH` (e.g., `/user/repos`), and clone this repo, for example:
 
   ```bash
+  cd $MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH
+  cd ..
   git clone https://github.com/jshe690/COSTA.git
   ```
 
-- Navigate to the COSTA directory:
+- Navigate to the COSTA directory [COSTA_DIRECTORY]:
 
   ```bash
   cd ./COSTA
@@ -53,3 +55,32 @@ To install the necessary COSTA components, please follow these steps:
   ```shell
   pip install -e .
   ```
+
+- Manually replace nnUNet's `segmentation_export.py` file:
+
+Rename:
+`$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/lib/python3.8/site-packages/nnunet/inference/segmentation_export.py`
+
+To:
+`$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/lib/python3.8/site-packages/nnunet/inference/segmentation_export_orig.py`
+
+And copy:
+`[COSTA_DIRECTORY]/extras/segmentation_export.py`
+
+To:
+`$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/lib/python3.8/site-packages/nnunet/inference`
+
+
+- Manually replace nnUNet's `neural_network.py` file:
+
+Rename:
+`$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/lib/python3.8/site-packages/nnunet/network_architecture/neural_network.py`
+
+To:
+`$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/lib/python3.8/site-packages/nnunet/network_architecture/neural_network_orig.py`
+
+And copy:
+`[COSTA_DIRECTORY]/extras/neural_network.py`
+
+To:
+`$MRAtoBG_BRAIN_VESSEL_SEGMENTATION_PATH/venv/lib/python3.8/site-packages/nnunet/network_architecture`
