@@ -14,7 +14,7 @@ Please ensure your system meets these requirements for full compatibility:
 
 ## **Requirements Installation**
 
-Before continuing, ensure you have completed step `1. Clone the Repository` from [here](https://github.com/jshe690/MRAtoBG_brain_vessel_segmentation).
+Before continuing, ensure you have completed step `1. Clone the Repository` from [here](https://github.com/ABI-Animus-Laboratory/MRAtoBG_brain_vessel_segmentation).
 
 You should now have a system variable to the MRAtoBG_brain_vessel_segmentation repo, for example:
 
